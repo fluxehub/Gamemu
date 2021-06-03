@@ -1,19 +1,20 @@
 using System;
 using System.Collections.Generic;
+using Gamemu.Emulator;
 
 namespace Gamemu.Emulator
 {
     public class Decompiler
     {
         // Decoding logic from https://gb-archive.github.io/salvage/decoding_gbz80_opcodes/Decoding%20Gamboy%20Z80%20Opcodes.html
-        private static string[] _r = { "B", "C", "D", "E", "H", "L", "(HL)", "A" };
-        private static string[] _rp = { "BC", "DE", "HL", "SP" };
-        private static string[] _rp2 = { "BC", "DE", "HL", "AF" };
-        private static string[] _cc = { "NZ", "Z", "NC", "C" };
-        private static string[] _alu = { "ADD A,", "ADC A,", "SUB", "SBC A,", "AND", "XOR", "OR", "CP" };
-        private static string[] _rot = { "RLC", "RRC", "RL", "RR", "SLA", "SRA", "SWAP", "SRL" };
+        private readonly string[] _r = { "B", "C", "D", "E", "H", "L", "(HL)", "A" };
+        private readonly string[] _rp = { "BC", "DE", "HL", "SP" };
+        private readonly string[] _rp2 = { "BC", "DE", "HL", "AF" };
+        private readonly string[] _cc = { "NZ", "Z", "NC", "C" };
+        private readonly string[] _alu = { "ADD A,", "ADC A,", "SUB", "SBC A,", "AND", "XOR", "OR", "CP" };
+        private readonly string[] _rot = { "RLC", "RRC", "RL", "RR", "SLA", "SRA", "SWAP", "SRL" };
 
-        private Cartridge _cartridge;
+        private readonly Cartridge _cartridge;
         private int _pc;
 
         public Decompiler(Cartridge cartridge)
@@ -37,7 +38,7 @@ namespace Gamemu.Emulator
         }
 
         // TODO: Translate displacement byte to effective address
-        public string Decode(int opcode)
+        private string Decode(int opcode)
         {
             var cb = opcode == 0xCB;
             if (cb)
@@ -144,8 +145,6 @@ namespace Gamemu.Emulator
                         case 7:
                             return "CCF";
                         }
-                        break;
-                    default:
                         break;
                     }
                     break;
@@ -261,7 +260,7 @@ namespace Gamemu.Emulator
             return "-- --";
         }
 
-        public string GetInstructionString(int address, int length)
+        private string GetInstructionString(int address, int length)
         {
             var instructionBytes = new List<int>();
             
@@ -270,36 +269,32 @@ namespace Gamemu.Emulator
                 instructionBytes.Add(_cartridge.Read(address + i));
             }
 
-            switch (length)
+            return length switch
             {
-            case 1:
-                return $"      {instructionBytes[0]:X2}";
-            case 2:
-                return $"   {instructionBytes[0]:X2} {instructionBytes[1]:X2}";
-            case 3:
-                return $"{instructionBytes[0]:X2} {instructionBytes[1]:X2} {instructionBytes[2]:X2}";
-            }
-            return null;
+                1 => $"      {instructionBytes[0]:X2}",
+                2 => $"   {instructionBytes[0]:X2} {instructionBytes[1]:X2}",
+                3 => $"{instructionBytes[0]:X2} {instructionBytes[1]:X2} {instructionBytes[2]:X2}",
+                _ => null
+            };
         }
 
         public int DecompileAt(int address, int lines = 6)
         {
             _pc = address;
-            int nextInstructionAddr = 0;
+            var nextInstructionAddr = 0;
             for (var i = 0; i < lines; ++i)
             {
                 if (i == 1)
                     nextInstructionAddr = _pc;
 
-                var _pcBeforeDecode = _pc;
-                int opcode = _cartridge.Read(_pc);
-                string decodedInstruction = Decode(opcode);
-                string instructionBytes = GetInstructionString(_pcBeforeDecode, (_pc - _pcBeforeDecode) + 1);
-                if (i == 0)
-                    Console.WriteLine($">>> ${_pc:X4}: {instructionBytes} {decodedInstruction}");
-                else
-                    Console.WriteLine($"    ${_pc:X4}: {instructionBytes} {decodedInstruction}");
-                
+                var pcBeforeDecode = _pc;
+                var opcode = _cartridge.Read(_pc);
+                var decodedInstruction = Decode(opcode);
+                var instructionBytes = GetInstructionString(pcBeforeDecode, (_pc - pcBeforeDecode) + 1);
+                Console.WriteLine(i == 0
+                    ? $">>> ${_pc:X4}: {instructionBytes} {decodedInstruction}"
+                    : $"    ${_pc:X4}: {instructionBytes} {decodedInstruction}");
+
                 _pc++;
             }
 

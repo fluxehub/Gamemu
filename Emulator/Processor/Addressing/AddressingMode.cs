@@ -1,0 +1,31 @@
+namespace Gamemu.Emulator.Processor.Addressing
+{
+    public enum AddressingMode
+    {
+        None,
+        RegisterA,
+        RegisterB,
+        RegisterC,
+        RegisterD,
+        RegisterE,
+        RegisterH,
+        RegisterL,
+        RegisterAF,
+        RegisterBC,
+        RegisterDE,
+        RegisterHL,
+        RegisterSP,
+        AbsoluteBC,
+        AbsoluteDE,
+        AbsoluteHL,
+        AbsoluteHLInc,
+        AbsoluteHLDec,
+        AbsoluteSP,
+        Immediate8,
+        Immediate16,
+        SignedImmediate,
+        AbsoluteImmediate,
+        IORegisterC,
+        IOImmediate,
+    }
+}

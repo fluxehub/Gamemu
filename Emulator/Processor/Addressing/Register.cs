@@ -1,41 +1,31 @@
 using System;
 
-namespace Gamemu.Emulator
+namespace Gamemu.Emulator.Processor.Addressing
 {
-    public class CPURegister : IAddressable
+    public class Register : IAddressable
     {
-        protected int _value;
+        protected int Value;
 
         public virtual int Read()
         {
-            return _value;
+            return Value;
         }
 
         public virtual void Write(int value)
         {
-            _value = value & 0xFF;
-        }
-
-        public void Increment()
-        {
-            Write(_value + 1);
-        }
-
-        public void Decrement()
-        {
-            Write(_value - 1);
+            Value = value & 0xFF;
         }
     }
 
-    public class CPU16Register : CPURegister
+    public class Register16 : Register
     {
         public override void Write(int value)
         {
-            _value = value & 0xFFFF;
+            Value = value & 0xFFFF;
         }
     }
 
-    public class CPUFlagsRegister : CPURegister
+    public class FlagsRegister : Register
     {
         public bool ZeroFlag { get; set; }
         public bool SubtractionFlag { get; set; }
@@ -58,12 +48,12 @@ namespace Gamemu.Emulator
         }
     }
 
-    public class CPUCombinedRegister : IAddressable
+    public class CombinedRegister : IAddressable
     {
-        private CPURegister _high;
-        private CPURegister _low;
+        private readonly Register _high;
+        private readonly Register _low;
 
-        public CPUCombinedRegister(CPURegister high, CPURegister low)
+        public CombinedRegister(Register high, Register low)
         {
             _high = high;
             _low = low;

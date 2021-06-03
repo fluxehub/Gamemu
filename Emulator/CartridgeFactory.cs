@@ -5,18 +5,18 @@ namespace Gamemu.Emulator
 {
     public class CartridgeFactory
     {
-        byte[] _data;
+        private readonly byte[] _data;
 
         public CartridgeFactory(string romFile)
         {
             _data = File.ReadAllBytes(romFile);
         }
 
-        public Cartridge MakeCartridge() =>
+        public Emulator.Cartridge MakeCartridge() =>
             _data[0x0147] switch
             {
                 // ROM only
-                0x00 => new Cartridge(_data),
+                0x00 => new Emulator.Cartridge(_data),
                 // MBC1
                 0x01 => new MBC1(_data, false, false),
                 // MBC1 + RAM

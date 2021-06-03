@@ -4,7 +4,7 @@ namespace Gamemu.Emulator
 {
     public class RAM : IMemory
     {
-        byte[] _ram;
+        private readonly byte[] _ram;
 
         public RAM(int size)
         {
@@ -24,7 +24,7 @@ namespace Gamemu.Emulator
 
     public class MemoryMap
     {
-        private Cartridge _cartridge;
+        private readonly Cartridge _cartridge;
         private RAM _wram = new(8192);
         private RAM _hram = new(128);
 

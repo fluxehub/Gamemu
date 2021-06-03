@@ -1,6 +1,6 @@
 namespace Gamemu.Emulator
 {
-    public class MBC1 : Cartridge
+    public class MBC1 : Emulator.Cartridge
     {
         private bool _hasRAM;
         private bool _hasBattery;

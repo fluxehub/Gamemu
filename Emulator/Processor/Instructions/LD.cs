@@ -111,7 +111,7 @@ namespace Gamemu.Emulator.Processor.Instructions
     [Instruction(Opcode = 0xFA, Cycles = 16, Source = AbsoluteImmediate, Dest = RegisterA)]
     public class LD : ReadWriteInstruction
     {
-        public LD(CPU cpu, int cycles, ISource source, IDest dest) : base(cpu, cycles, source, dest)
+        public LD(ISource source, IDest dest, int cycles) : base(source, dest, cycles)
         {
         }
 

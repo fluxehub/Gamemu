@@ -7,12 +7,11 @@ namespace Gamemu.Emulator.Processor
     {
         private readonly Register _a, _b, _c, _d, _e, _h, _l;
         private readonly CombinedRegister _af, _bc, _de, _hl;
+        private readonly FlagsRegister _f = new();
 
-        // Required to be public in order for instructions to access
-        public FlagsRegister Flags { get; }
-        public Register16 StackPointer { get; set; }
-        public int ProgramCounter { get; set; }
-        public MemoryMap Memory { get; }
+        private readonly Register16 _sp = new();
+        private readonly Register16 _pc = new();
+        private readonly MemoryMap _memory;
 
         public CPU(MemoryMap memoryMap)
         {
@@ -23,11 +22,8 @@ namespace Gamemu.Emulator.Processor
             _e = new Register();
             _h = new Register();
             _l = new Register();
-            Flags = new FlagsRegister();
 
-            StackPointer = new Register16();
-
-            _af = new CombinedRegister(_a, Flags);
+            _af = new CombinedRegister(_a, _f);
             _bc = new CombinedRegister(_b, _c);
             _de = new CombinedRegister(_d, _e);
             _hl = new CombinedRegister(_h, _l);
@@ -37,14 +33,14 @@ namespace Gamemu.Emulator.Processor
             _bc.Write(0x0013);
             _de.Write(0x00D8);
             _hl.Write(0x014D);
-            StackPointer.Write(0xFFFE);
-            ProgramCounter = 0x0100;
+            _sp.Write(0xFFFE);
+            _pc.Write(0x0100);
 
-            Flags.ZeroFlag = true;
-            Flags.SubtractionFlag = false;
-            Flags.HalfCarryFlag = true;
-            Flags.CarryFlag = true;
-            Memory = memoryMap;
+            _f.ZeroFlag = true;
+            _f.SubtractionFlag = false;
+            _f.HalfCarryFlag = true;
+            _f.CarryFlag = true;
+            _memory = memoryMap;
             
             CreateInstructionTable();
         }
@@ -55,22 +51,22 @@ namespace Gamemu.Emulator.Processor
             Console.WriteLine($"CPU Registers");
             Console.WriteLine($"AF: 0x{_af.Read():X4}    BC: 0x{_bc.Read():X4}");
             Console.WriteLine($"DE: 0x{_de.Read():X4}    HL: 0x{_hl.Read():X4}");
-            Console.WriteLine($"SP: 0x{StackPointer.Read():X4}    PC: 0x{ProgramCounter:X4}");
+            Console.WriteLine($"SP: 0x{_sp.Read():X4}    PC: 0x{_pc:X4}");
         }
 
         public void Tick()
         {
-            var opcode = Memory.Read(ProgramCounter);
+            var opcode = _memory.Read(_pc.Read());
             
             if (opcode == 0xCB)
             {
-                ProgramCounter++;
-                opcode = opcode << 8 | Memory.Read(ProgramCounter);
+                _pc.Increment();
+                opcode = opcode << 8 | _memory.Read(_pc.Read());
             }
 
             //var cycles = DecodeAndExecute(opcode);
 
-            ProgramCounter++;
+            _pc.Increment();
         }
     }
 }

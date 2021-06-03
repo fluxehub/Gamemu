@@ -25,13 +25,13 @@ namespace Gamemu.Emulator.Processor
             AddressingMode.RegisterBC => _bc,
             AddressingMode.RegisterDE => _de,
             AddressingMode.RegisterHL => _hl,
-            AddressingMode.RegisterSP => StackPointer,
-            AddressingMode.AbsoluteBC => new Absolute(Memory, _bc),
-            AddressingMode.AbsoluteDE => new Absolute(Memory, _de),
-            AddressingMode.AbsoluteHL => new Absolute(Memory, _hl),
-            AddressingMode.AbsoluteSP => new Absolute(Memory, StackPointer),
-            AddressingMode.AbsoluteHLInc => new AbsoluteWithRegIncOrDec(Memory, _hl, 1),
-            AddressingMode.AbsoluteHLDec => new AbsoluteWithRegIncOrDec(Memory, _hl, -1),
+            AddressingMode.RegisterSP => _sp,
+            AddressingMode.AbsoluteBC => new Absolute(_memory, _bc),
+            AddressingMode.AbsoluteDE => new Absolute(_memory, _de),
+            AddressingMode.AbsoluteHL => new Absolute(_memory, _hl),
+            AddressingMode.AbsoluteSP => new Absolute(_memory, _sp),
+            AddressingMode.AbsoluteHLInc => new AbsoluteWithRegIncOrDec(_memory, _hl, 1),
+            AddressingMode.AbsoluteHLDec => new AbsoluteWithRegIncOrDec(_memory, _hl, -1),
             _ => null
         };
 
@@ -77,6 +77,10 @@ namespace Gamemu.Emulator.Processor
                         // TODO: Work out how to switch on type not name of type
                         switch (param.ParameterType.Name)
                         {
+                            // This is bad
+                            case nameof(Int32):
+                                parameters.Add(attribute.Cycles);
+                                break;
                             case nameof(ISource):
                                 parameters.Add(GetParameterForAddressingMode(attribute.Source));
                                 break;
@@ -84,7 +88,13 @@ namespace Gamemu.Emulator.Processor
                                 parameters.Add(GetParameterForAddressingMode(attribute.Dest));
                                 break;
                             case nameof(MemoryMap):
-                                parameters.Add(Memory);
+                                parameters.Add(_memory);
+                                break;
+                            case nameof(Register):
+                                parameters.Add(GetParameterForAddressingMode(attribute.Addressable));
+                                break;
+                            case nameof(FlagsRegister):
+                                parameters.Add(_f);
                                 break;
                             default:
                                 throw new ArgumentException(

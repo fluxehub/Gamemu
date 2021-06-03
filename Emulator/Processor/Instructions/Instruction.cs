@@ -3,26 +3,12 @@ using static Gamemu.Emulator.Processor.Addressing.AddressingMode;
 
 namespace Gamemu.Emulator.Processor.Instructions
 {
-    [System.AttributeUsage(System.AttributeTargets.Class, Inherited = false, AllowMultiple = true)]  
-    public class InstructionAttribute : System.Attribute
-    {
-        public int Opcode;
-        public int Cycles = 4;
-        public int CyclesAlternate = 0;
-        public AddressingMode Source = None;
-        public AddressingMode Dest = None;
-    }
-    
     public abstract class Instruction
     {
-        protected readonly CPU CPU;
-        protected readonly int CyclesAlternate = 0;
-        
         public int Cycles { get; private set; }
 
-        protected Instruction(CPU cpu, int cycles)
+        protected Instruction(int cycles)
         {
-            CPU = cpu;
             Cycles = cycles;
         }
 
@@ -33,7 +19,7 @@ namespace Gamemu.Emulator.Processor.Instructions
     {
         protected readonly IDest Dest;
         
-        protected WriteInstruction(CPU cpu, int cycles, IDest dest) : base(cpu, cycles)
+        protected WriteInstruction(IDest dest, int cycles) : base(cycles)
         {
             Dest = dest;
         }
@@ -43,9 +29,19 @@ namespace Gamemu.Emulator.Processor.Instructions
     {
         protected readonly ISource Source;
         
-        protected ReadWriteInstruction(CPU cpu, int cycles, ISource source, IDest dest) : base(cpu, cycles, dest)
+        protected ReadWriteInstruction(ISource source, IDest dest, int cycles) : base(dest, cycles)
         {
             Source = source;
+        }
+    }
+
+    public abstract class SameRegisterInstruction : Instruction
+    {
+        protected readonly Register Register;
+
+        protected SameRegisterInstruction(Register register, int cycles) : base(cycles)
+        {
+            Register = register;
         }
     }
 }

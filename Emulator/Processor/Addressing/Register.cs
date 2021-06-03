@@ -15,6 +15,16 @@ namespace Gamemu.Emulator.Processor.Addressing
         {
             Value = value & 0xFF;
         }
+
+        public void Increment()
+        {
+            Write(Read() + 1);
+        }
+        
+        public void Decrement()
+        {
+            Write(Read() - 1);
+        }
     }
 
     public class Register16 : Register
@@ -48,7 +58,7 @@ namespace Gamemu.Emulator.Processor.Addressing
         }
     }
 
-    public class CombinedRegister : IAddressable
+    public class CombinedRegister : Register
     {
         private readonly Register _high;
         private readonly Register _low;
@@ -59,12 +69,12 @@ namespace Gamemu.Emulator.Processor.Addressing
             _low = low;
         }
 
-        public int Read()
+        public override int Read()
         {
             return (_high.Read() << 8) | _low.Read();
         }
 
-        public void Write(int value)
+        public override void Write(int value)
         {
             _high.Write((value >> 8) & 0xFF);
             _low.Write(value & 0xFF);

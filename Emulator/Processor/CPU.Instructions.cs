@@ -62,14 +62,7 @@ namespace Gamemu.Emulator.Processor
 
                     opcode = isCB ? opcode >> 2 : opcode;
                     
-                    // The first 2 to 3 parameters will always be the CPU, the cycle count
-                    // and optionally an alternate cycle count
-                    var parameters = new List<object>() {this, cycles};
-
-                    if (attribute.CyclesAlternate != 0)
-                    {
-                        parameters.Add(attribute.CyclesAlternate);
-                    }
+                    var parameters = new List<object>(ctor.GetParameters().Length);
                     
                     // Add the rest of the parameters
                     foreach (var param in ctor.GetParameters().Skip(parameters.Count))

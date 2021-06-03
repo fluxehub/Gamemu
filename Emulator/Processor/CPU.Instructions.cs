@@ -91,8 +91,26 @@ namespace Gamemu.Emulator.Processor
                                     $"Unknown mapping for parameter \"{param.ParameterType.Name} {param.Name}\"");
                         }
                     }
+                    
+                    if (parameters.Count == ctor.GetParameters().Length)
+                        table[opcode] = (Instruction) ctor.Invoke(parameters.ToArray());
+                }
+            }
 
-                    table[opcode] = (Instruction) ctor.Invoke(parameters.ToArray());
+            var invalidOpcodes = new List<int>()
+            {
+                0xD3, 0xE3, 0xE4, 0xF4,
+                0xDB, 0xEB, 0xEC, 0xFC,
+                0xDD, 0xED, 0xFD
+            };
+
+            for (var i = 0; i < 0xFF; i++)
+            {
+                if (invalidOpcodes.Contains(i)) continue;
+                    
+                if (_instructionTable[i] == null)
+                {
+                    Console.WriteLine($"No instruction given for opcode 0x{i:X2}");
                 }
             }
         }

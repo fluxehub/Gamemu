@@ -23,7 +23,7 @@ namespace Gamemu.Emulator.Processor.Addressing
     }
 
     // Used for (HL+)/(HL-) instructions
-    public class AbsoluteWithRegIncOrDec : ISource
+    public class AbsoluteWithRegIncOrDec : IAddressable
     {
         private readonly CombinedRegister _register;
         private readonly MemoryMap _memoryMap;
@@ -42,6 +42,13 @@ namespace Gamemu.Emulator.Processor.Addressing
             var value = _memoryMap.Read(regValue);
             _register.Write(regValue + _shift);
             return value;
+        }
+
+        public void Write(int value)
+        {
+            var regValue = _register.Read();
+            _memoryMap.Write(regValue, value);
+            _register.Write(regValue + _shift);
         }
     }
 }

@@ -18,14 +18,14 @@ namespace Gamemu.Emulator.Processor.Addressing
         AbsoluteBC,
         AbsoluteDE,
         AbsoluteHL,
+        AbsoluteSP,
         AbsoluteHLInc,
         AbsoluteHLDec,
-        AbsoluteSP,
-        Immediate8,
-        Immediate16,
-        SignedImmediate,
         AbsoluteImmediate,
-        IORegisterC,
+        Immediate,
+        ImmediateSigned,
+        Immediate16,
         IOImmediate,
+        IORegisterC
     }
 }

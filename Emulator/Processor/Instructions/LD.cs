@@ -13,20 +13,20 @@ namespace Gamemu.Emulator.Processor.Instructions
     [Instruction(Opcode = 0x22, Cycles = 8, Source = RegisterA, Dest = AbsoluteHLInc)]
     [Instruction(Opcode = 0x32, Cycles = 8, Source = RegisterA, Dest = AbsoluteHLDec)]
     
-    [Instruction(Opcode = 0x06, Cycles = 8, Source = Immediate8, Dest = RegisterB)]
-    [Instruction(Opcode = 0x16, Cycles = 8, Source = Immediate8, Dest = RegisterD)]
-    [Instruction(Opcode = 0x26, Cycles = 8, Source = Immediate8, Dest = RegisterH)]
-    [Instruction(Opcode = 0x36, Cycles = 12, Source = Immediate8, Dest = AbsoluteHL)]
+    [Instruction(Opcode = 0x06, Cycles = 8, Source = Immediate, Dest = RegisterB)]
+    [Instruction(Opcode = 0x16, Cycles = 8, Source = Immediate, Dest = RegisterD)]
+    [Instruction(Opcode = 0x26, Cycles = 8, Source = Immediate, Dest = RegisterH)]
+    [Instruction(Opcode = 0x36, Cycles = 12, Source = Immediate, Dest = AbsoluteHL)]
 
     [Instruction(Opcode = 0x0A, Cycles = 8, Source = AbsoluteBC, Dest = RegisterA)]
     [Instruction(Opcode = 0x1A, Cycles = 8, Source = AbsoluteDE, Dest = RegisterA)]
     [Instruction(Opcode = 0x2A, Cycles = 8, Source = AbsoluteHLInc, Dest = RegisterA)]
     [Instruction(Opcode = 0x3A, Cycles = 8, Source = AbsoluteHLDec, Dest = RegisterA)]
     
-    [Instruction(Opcode = 0x0E, Cycles = 8, Source = Immediate8, Dest = RegisterC)]
-    [Instruction(Opcode = 0x1E, Cycles = 8, Source = Immediate8, Dest = RegisterE)]
-    [Instruction(Opcode = 0x2E, Cycles = 8, Source = Immediate8, Dest = RegisterL)]
-    [Instruction(Opcode = 0x3E, Cycles = 8, Source = Immediate8, Dest = RegisterA)]
+    [Instruction(Opcode = 0x0E, Cycles = 8, Source = Immediate, Dest = RegisterC)]
+    [Instruction(Opcode = 0x1E, Cycles = 8, Source = Immediate, Dest = RegisterE)]
+    [Instruction(Opcode = 0x2E, Cycles = 8, Source = Immediate, Dest = RegisterL)]
+    [Instruction(Opcode = 0x3E, Cycles = 8, Source = Immediate, Dest = RegisterA)]
     
     [Instruction(Opcode = 0x40, Source = RegisterB, Dest = RegisterB)]
     [Instruction(Opcode = 0x41, Source = RegisterC, Dest = RegisterB)]

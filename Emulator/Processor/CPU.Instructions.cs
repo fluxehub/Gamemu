@@ -32,7 +32,13 @@ namespace Gamemu.Emulator.Processor
             AddressingMode.AbsoluteSP => new Absolute(_memory, _sp),
             AddressingMode.AbsoluteHLInc => new AbsoluteWithRegIncOrDec(_memory, _hl, 1),
             AddressingMode.AbsoluteHLDec => new AbsoluteWithRegIncOrDec(_memory, _hl, -1),
-            _ => null
+            AddressingMode.AbsoluteImmediate => new Absolute(_memory, new Immediate16(_memory, _pc)),
+            AddressingMode.Immediate => new Immediate(_memory, _pc),
+            AddressingMode.ImmediateSigned => new ImmediateSigned(_memory, _pc),
+            AddressingMode.Immediate16 => new Immediate16(_memory, _pc),
+            AddressingMode.IOImmediate => new IO(_memory, new Immediate16(_memory, _pc)),
+            AddressingMode.IORegisterC => new IO(_memory, _c),
+            _ => throw new ArgumentException($"Addressing mode {mode.ToString()} not implemented")
         };
 
         private void CreateInstructionTable()
@@ -49,7 +55,6 @@ namespace Gamemu.Emulator.Processor
                 {
                     var ctor = type.GetConstructors()[0];
                     var opcode = attribute.Opcode;
-                    var cycles = attribute.Cycles;
                     
                     var isCB = (opcode >> 2) == 0xCB;
                     

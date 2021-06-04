@@ -11,6 +11,7 @@ namespace Gamemu.Emulator.Processor.Instructions
         public AddressingMode Source = AddressingMode.None;
         public AddressingMode Dest = AddressingMode.None;
         public AddressingMode Addressable = AddressingMode.None;
+        public int RestartAddress = 0;
     }
 
     [System.AttributeUsage(System.AttributeTargets.Parameter)]
@@ -19,22 +20,22 @@ namespace Gamemu.Emulator.Processor.Instructions
     }
 
     [System.AttributeUsage(System.AttributeTargets.Parameter)]
-    public class PC : System.Attribute
+    public class PCAttribute : System.Attribute
     {
     }
     
     [System.AttributeUsage(System.AttributeTargets.Parameter)]
-    public class SP : System.Attribute
+    public class SPAttribute : System.Attribute
     {
     }
     
     [System.AttributeUsage(System.AttributeTargets.Parameter)]
-    public class A : System.Attribute
+    public class AAttribute : System.Attribute
     {
     }
     
     [System.AttributeUsage(System.AttributeTargets.Parameter)]
-    public class C : System.Attribute
+    public class RestartAddressAttribute : System.Attribute
     {
     }
 }

@@ -51,10 +51,10 @@ namespace Gamemu.Emulator.Processor
 
                 if (instructionAttributes.Count <= 0) continue;
                 
-                foreach (var attribute in instructionAttributes)
+                foreach (var instructionAttribute in instructionAttributes)
                 {
                     var ctor = type.GetConstructors()[0];
-                    var opcode = attribute.Opcode;
+                    var opcode = instructionAttribute.Opcode;
                     
                     var isCB = (opcode >> 2) == 0xCB;
                     
@@ -69,39 +69,63 @@ namespace Gamemu.Emulator.Processor
                     
                     var parameters = new List<object>(ctor.GetParameters().Length);
                     
-                    // Add the rest of the parameters
-                    foreach (var param in ctor.GetParameters().Skip(parameters.Count))
+                    foreach (var param in ctor.GetParameters())
                     {
-                        // TODO: Work out how to switch on type not name of type
-                        switch (param.ParameterType.Name)
+                        var instructionAttributeType = param.ParameterType;
+
+                        if (instructionAttributeType == typeof(int))
                         {
-                            // This is bad
-                            case nameof(Int32):
-                                parameters.Add(attribute.Cycles);
-                                break;
-                            case nameof(ISource):
-                                parameters.Add(GetParameterForAddressingMode(attribute.Source));
-                                break;
-                            case nameof(IDest):
-                                parameters.Add(GetParameterForAddressingMode(attribute.Dest));
-                                break;
-                            case nameof(MemoryMap):
-                                parameters.Add(_memory);
-                                break;
-                            case nameof(Register):
-                                parameters.Add(GetParameterForAddressingMode(attribute.Addressable));
-                                break;
-                            case nameof(FlagsRegister):
-                                parameters.Add(_f);
-                                break;
-                            default:
-                                throw new ArgumentException(
-                                    $"Unknown mapping for parameter \"{param.ParameterType.Name} {param.Name}\"");
+                            var paramAttributes = param.GetCustomAttributes().ToList();
+
+                            if (paramAttributes.Count > 0)
+                            {
+                                var attributeType = paramAttributes[0].GetType();
+                                    
+                                // There's only one parameter attribute
+                                if (attributeType == typeof(AlternateAttribute))
+                                {
+                                    parameters.Add(instructionAttribute.CyclesAlternate);
+                                } 
+                                else if (attributeType == typeof(RestartAddressAttribute))
+                                {
+                                    parameters.Add(instructionAttribute.RestartAddress);
+                                }
+                            }
+                            else
+                            {
+                                parameters.Add(instructionAttribute.Cycles);
+                            }
+                        } 
+                        else if (instructionAttributeType == typeof(ISource))
+                        {
+                            parameters.Add(GetParameterForAddressingMode(instructionAttribute.Source));
+                        } 
+                        else if (instructionAttributeType == typeof(IDest))
+                        {
+                            parameters.Add(GetParameterForAddressingMode(instructionAttribute.Dest));
+                        }  
+                        else if (instructionAttributeType == typeof(Register))
+                        {
+                            parameters.Add(GetParameterForAddressingMode(instructionAttribute.Addressable));
+                        } 
+                        else if (instructionAttributeType == typeof(MemoryMap))
+                        {
+                            parameters.Add(_memory);
+                        }
+                        else if (instructionAttributeType == typeof(FlagsRegister))
+                        {
+                            parameters.Add(_f);
+                        }
+                        else
+                        {
+                            throw new ArgumentException(
+                                $"Unknown mapping for parameter \"{instructionAttributeType.Name} {param.Name}\"");
                         }
                     }
                     
-                    if (parameters.Count == ctor.GetParameters().Length)
-                        table[opcode] = (Instruction) ctor.Invoke(parameters.ToArray());
+                    
+                   // if (parameters.Count == ctor.GetParameters().Length)
+                   table[opcode] = (Instruction) ctor.Invoke(parameters.ToArray());
                 }
             }
 

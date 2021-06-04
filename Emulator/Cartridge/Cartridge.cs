@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Gamemu.Emulator
 {
-    public class Cartridge : IMemory
+    public class Cartridge : Memory
     {
         private string Title { get; set; }
         private readonly byte[] _data;
@@ -29,12 +29,12 @@ namespace Gamemu.Emulator
             Title = titleBuilder.ToString();
         }
 
-        public virtual int Read(int address)
+        protected override int Read(int address)
         {
             return _data[address];
         }
 
-        public virtual void Write(int address, int value)
+        protected override void Write(int address, int value)
         {
             throw new InvalidOperationException("Attempt to write to ROM-only cartridge");
         }

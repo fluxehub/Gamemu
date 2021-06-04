@@ -29,17 +29,17 @@ namespace Gamemu.Emulator.Processor.Instructions
         public override void Execute()
         {
             // Push PC value onto stack
-            var pcValue = _pc.Read();
-            var spValue = _sp.Read();
+            var pcAddress = _pc.Read();
+            var stackAddress = _sp.Read() - 1;
 
-            _memory.Write(spValue - 1, pcValue >> 8);
-            _memory.Write(spValue - 2, pcValue & 0xFF);
+            _memory[stackAddress] = pcAddress >> 8;
+            _memory[stackAddress - 1] =  pcAddress & 0xFF;
             
             // Set PC to reset address
             _pc.Write(_address);
             
-            // Decrement SP by 2 to point to top of stack
-            _sp.Write(spValue - 2);
+            // Set SP to top of stack
+            _sp.Write(stackAddress - 1);
         }
     }
 }

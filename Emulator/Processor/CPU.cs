@@ -12,6 +12,9 @@ namespace Gamemu.Emulator.Processor
         private readonly Register16 _sp = new();
         private readonly Register16 _pc = new();
         private readonly MemoryMap _memory;
+        
+        // Needs to be public for EI/DI/RETI
+        public InterruptStatus InterruptStatus { get; set; }
 
         public CPU(MemoryMap memoryMap)
         {
@@ -56,12 +59,12 @@ namespace Gamemu.Emulator.Processor
 
         public void Tick()
         {
-            var opcode = _memory.Read(_pc.Read());
+            var opcode = _memory[_pc.Read()];
             
             if (opcode == 0xCB)
             {
                 _pc.Increment();
-                opcode = opcode << 8 | _memory.Read(_pc.Read());
+                opcode = opcode << 8 | _memory[_pc.Read()];
             }
 
             //var cycles = DecodeAndExecute(opcode);

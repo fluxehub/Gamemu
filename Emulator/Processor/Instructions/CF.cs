@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using Gamemu.Emulator.Processor.Addressing;
 
 namespace Gamemu.Emulator.Processor.Instructions

@@ -2,7 +2,7 @@ using System;
 
 namespace Gamemu.Emulator
 {
-    public class RAM : IMemory
+    public class RAM : Memory
     {
         private readonly byte[] _ram;
 
@@ -11,18 +11,18 @@ namespace Gamemu.Emulator
             _ram = new byte[size];
         }
 
-        public int Read(int address)
+        protected override int Read(int address)
         {
             return _ram[address];
         }
 
-        public void Write(int address, int value)
+        protected override void Write(int address, int value)
         {
             _ram[address] = (byte) value;
         }
     }
 
-    public class MemoryMap
+    public class MemoryMap : Memory
     {
         private readonly Cartridge _cartridge;
         private RAM _wram = new(8192);
@@ -34,7 +34,7 @@ namespace Gamemu.Emulator
         }
 
         // TODO: Work out how to return address with offset removed
-        private IMemory GetMemoryDevice(int address) => address switch
+        private Memory GetMemoryDevice(int address) => address switch
         {
             <      0 => throw new ArgumentOutOfRangeException($"Attempted to access invalid memory address 0x{address:X4}"),
             < 0x8000 => _cartridge,
@@ -43,8 +43,15 @@ namespace Gamemu.Emulator
             _ => throw new ArgumentOutOfRangeException($"Attempted to access invalid memory location 0x{address:X4}")
         };
 
-        public int Read(int address) => GetMemoryDevice(address).Read(address);
+        protected override int Read(int address) => GetMemoryDevice(address)[address];
 
-        public void Write(int address, int value) => GetMemoryDevice(address).Write(address, value);
+        protected override void Write(int address, int value)
+        {
+            // Blargg rom writes characters to serial
+            if (address == 0xFF01)
+                Console.Write((char) value);
+            
+            GetMemoryDevice(address)[address] = value;
+        }
     }
 }

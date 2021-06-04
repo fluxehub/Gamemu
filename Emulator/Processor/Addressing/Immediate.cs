@@ -14,7 +14,7 @@ namespace Gamemu.Emulator.Processor.Addressing
         public virtual int Read()
         {
             PC.Increment();
-            return Memory.Read(PC.Read());
+            return Memory[PC.Read()];
         }
     }
     
@@ -37,9 +37,9 @@ namespace Gamemu.Emulator.Processor.Addressing
         public override int Read()
         {
             PC.Increment();
-            var low = Memory.Read(PC.Read());
+            var low = Memory[PC.Read()];
             PC.Increment();
-            var high = Memory.Read(PC.Read());
+            var high = Memory[PC.Read()];
             return (high << 8) | low;
         }
     }

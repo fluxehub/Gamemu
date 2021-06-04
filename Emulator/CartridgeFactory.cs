@@ -12,11 +12,11 @@ namespace Gamemu.Emulator
             _data = File.ReadAllBytes(romFile);
         }
 
-        public Emulator.Cartridge MakeCartridge() =>
+        public Cartridge MakeCartridge() =>
             _data[0x0147] switch
             {
                 // ROM only
-                0x00 => new Emulator.Cartridge(_data),
+                0x00 => new Cartridge(_data),
                 // MBC1
                 0x01 => new MBC1(_data, false, false),
                 // MBC1 + RAM

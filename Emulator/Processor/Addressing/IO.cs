@@ -13,12 +13,12 @@ namespace Gamemu.Emulator.Processor.Addressing
 
         public int Read()
         {
-            return _memory.Read(0xFF00 + _source.Read());
+            return _memory[0xFF00 + _source.Read()];
         }
         
         public void Write(int value)
         {
-            _memory.Write(0xFF00 + _source.Read(), value);
+            _memory[0xFF00 + _source.Read()] = value;
         }
     }
 }

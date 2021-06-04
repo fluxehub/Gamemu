@@ -8,10 +8,10 @@ namespace Gamemu.Emulator.Processor.Instructions
         public int Opcode;
         public int Cycles = 4;
         public int CyclesAlternate = 0;
+        public int RestartAddress = 0;
         public AddressingMode Source = AddressingMode.None;
         public AddressingMode Dest = AddressingMode.None;
         public AddressingMode Addressable = AddressingMode.None;
-        public int RestartAddress = 0;
     }
 
     [System.AttributeUsage(System.AttributeTargets.Parameter)]

@@ -13,12 +13,12 @@ namespace Gamemu.Emulator.Processor.Addressing
 
         public int Read()
         {
-            return _memoryMap.Read(_source.Read());
+            return _memoryMap[_source.Read()];
         }
 
         public void Write(int value)
         {
-            _memoryMap.Write(_source.Read(), value);
+            _memoryMap[_source.Read()] = value;
         }
     }
 
@@ -39,7 +39,7 @@ namespace Gamemu.Emulator.Processor.Addressing
         public int Read()
         {
             var regValue = _register.Read();
-            var value = _memoryMap.Read(regValue);
+            var value = _memoryMap[regValue];
             _register.Write(regValue + _shift);
             return value;
         }
@@ -47,7 +47,7 @@ namespace Gamemu.Emulator.Processor.Addressing
         public void Write(int value)
         {
             var regValue = _register.Read();
-            _memoryMap.Write(regValue, value);
+            _memoryMap[regValue] = value;
             _register.Write(regValue + _shift);
         }
     }

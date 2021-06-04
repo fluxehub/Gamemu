@@ -9,8 +9,8 @@ namespace Gamemu.Emulator.Processor
 {
     public partial class CPU
     {
-        private Instruction[] _instructionTable = new Instruction[0xFF];
-        private Instruction[] _cbInstructionTable = new Instruction[0xFF];
+        private readonly Instruction[] _instructionTable = new Instruction[256];
+        private readonly Instruction[] _cbInstructionTable = new Instruction[256];
 
         private object GetParameterForAddressingMode(AddressingMode mode) => mode switch
         {
@@ -81,7 +81,7 @@ namespace Gamemu.Emulator.Processor
                             {
                                 var attributeType = paramAttributes[0].GetType();
                                     
-                                // There's only one parameter attribute
+                                // There is only ever one attribute
                                 if (attributeType == typeof(AlternateAttribute))
                                 {
                                     parameters.Add(instructionAttribute.CyclesAlternate);
@@ -104,10 +104,43 @@ namespace Gamemu.Emulator.Processor
                         {
                             parameters.Add(GetParameterForAddressingMode(instructionAttribute.Dest));
                         }  
-                        else if (instructionAttributeType == typeof(Register))
+                        else if (instructionAttributeType == typeof(IAddressable))
                         {
                             parameters.Add(GetParameterForAddressingMode(instructionAttribute.Addressable));
-                        } 
+                        }
+                        else if (instructionAttributeType == typeof(Register))
+                        {
+                            var paramAttributes = param.GetCustomAttributes().ToList();
+                            
+                            // The only register that can be passed is A
+                            if (paramAttributes.Count == 0 || paramAttributes[0].GetType() != typeof(AAttribute))
+                                throw new ArgumentException(
+                                    $"Unknown mapping for parameter \"{instructionAttributeType.Name} {param.Name}\"");
+
+                            parameters.Add(_a);
+                        }
+                        else if (instructionAttributeType == typeof(Register16))
+                        {
+                            var paramAttributes = param.GetCustomAttributes().ToList();
+
+                            if (paramAttributes.Count == 0)
+                            {
+                                throw new ArgumentException(
+                                $"Unknown mapping for parameter \"{instructionAttributeType.Name} {param.Name}\"");
+                            }
+                            
+                            // There is only ever one attribute
+                            var attributeType = paramAttributes[0].GetType();
+                                
+                            if (attributeType == typeof(SPAttribute))
+                            {
+                                parameters.Add(_sp);
+                            } 
+                            else if (attributeType == typeof(PCAttribute))
+                            {
+                                parameters.Add(_pc);
+                            }
+                        }
                         else if (instructionAttributeType == typeof(MemoryMap))
                         {
                             parameters.Add(_memory);
@@ -116,16 +149,19 @@ namespace Gamemu.Emulator.Processor
                         {
                             parameters.Add(_f);
                         }
+                        else if (instructionAttributeType == typeof(CPU))
+                        {
+                            parameters.Add(this);
+                        }
                         else
                         {
                             throw new ArgumentException(
                                 $"Unknown mapping for parameter \"{instructionAttributeType.Name} {param.Name}\"");
                         }
                     }
-                    
-                    
-                   // if (parameters.Count == ctor.GetParameters().Length)
-                   table[opcode] = (Instruction) ctor.Invoke(parameters.ToArray());
+
+                    // if (parameters.Count == ctor.GetParameters().Length)
+                    table[opcode] = (Instruction) ctor.Invoke(parameters.ToArray());
                 }
             }
 

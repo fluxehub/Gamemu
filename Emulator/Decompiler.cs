@@ -25,15 +25,15 @@ namespace Gamemu.Emulator
         private int GetImmediate()
         {
             _pc++;
-            return _cartridge.Read(_pc);
+            return _cartridge[_pc];
         }
 
         private int GetImmediate16()
         {
             _pc++;
-            var low = _cartridge.Read(_pc);
+            var low = _cartridge[_pc];
             _pc++;
-            var high = _cartridge.Read(_pc);
+            var high = _cartridge[_pc];
             return high << 8 | low;
         }
 
@@ -44,7 +44,7 @@ namespace Gamemu.Emulator
             if (cb)
             {
                 _pc++;
-                opcode = _cartridge.Read(_pc);
+                opcode = _cartridge[_pc];
             }
 
             var x = opcode >> 6;
@@ -266,7 +266,7 @@ namespace Gamemu.Emulator
             
             for (var i = 0; i < length; i++)
             {
-                instructionBytes.Add(_cartridge.Read(address + i));
+                instructionBytes.Add(_cartridge[address + i]);
             }
 
             return length switch
@@ -288,7 +288,7 @@ namespace Gamemu.Emulator
                     nextInstructionAddr = _pc;
 
                 var pcBeforeDecode = _pc;
-                var opcode = _cartridge.Read(_pc);
+                var opcode = _cartridge[_pc];
                 var decodedInstruction = Decode(opcode);
                 var instructionBytes = GetInstructionString(pcBeforeDecode, (_pc - pcBeforeDecode) + 1);
                 Console.WriteLine(i == 0

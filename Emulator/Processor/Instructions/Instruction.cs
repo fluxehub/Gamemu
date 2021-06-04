@@ -14,6 +14,18 @@ namespace Gamemu.Emulator.Processor.Instructions
 
         public abstract void Execute();
     }
+    
+    // For instructions that only read and use a side effect
+    // e.g. PUSH
+    public abstract class ReadInstruction : Instruction
+    {
+        protected readonly ISource Source;
+
+        protected ReadInstruction(ISource source, int cycles) : base(cycles)
+        {
+            Source = source;
+        }
+    }
 
     public abstract class WriteInstruction : Instruction
     {
@@ -35,13 +47,14 @@ namespace Gamemu.Emulator.Processor.Instructions
         }
     }
 
-    public abstract class SameRegisterInstruction : Instruction
+    // Instructions that read and write to the same place, such as INC
+    public abstract class SameReadWriteInstruction : Instruction
     {
-        protected readonly Register Register;
+        protected readonly IAddressable Addressable;
 
-        protected SameRegisterInstruction(Register register, int cycles) : base(cycles)
+        protected SameReadWriteInstruction(IAddressable addressable, int cycles) : base(cycles)
         {
-            Register = register;
+            Addressable = addressable;
         }
     }
 }

@@ -52,9 +52,13 @@ namespace Gamemu.Emulator.Processor.Addressing
             return z | s | h | c;
         }
 
+        // Needed for the POP instruction
         public override void Write(int value)
         {
-            throw new ArgumentException("Attempted to write directly to flag register");
+            ZeroFlag = ((value >> 7) & 1) == 1;
+            SubtractionFlag = ((value >> 6) & 1) == 1;
+            HalfCarryFlag = ((value >> 5) & 1) == 1;
+            CarryFlag = ((value >> 4) & 1) == 1;
         }
     }
 

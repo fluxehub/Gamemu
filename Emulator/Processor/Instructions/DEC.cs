@@ -7,15 +7,16 @@ namespace Gamemu.Emulator.Processor.Instructions
     [Instruction(Opcode = 0x1B, Cycles = 8, Addressable = RegisterDE)]
     [Instruction(Opcode = 0x2B, Cycles = 8, Addressable = RegisterHL)]
     [Instruction(Opcode = 0x3B, Cycles = 8, Addressable = RegisterSP)]
-    public class DEC16 : SameRegisterInstruction
+    public class DEC16 : SameReadWriteInstruction
     {
-        public DEC16(Register register, int cycles) : base(register, cycles)
+        public DEC16(IAddressable addressable, int cycles) : base(addressable, cycles)
         {
         }
 
         public override void Execute()
         {
-            Register.Decrement();
+            // Cast to register type to use Decrement
+            ((Register16) Addressable).Decrement();
         }
     }
 }

@@ -5,7 +5,7 @@ using Gamemu.Emulator;
 using Gamemu.Rendering;
 using static SDL2.SDL;
 
-var test = new CartridgeFactory("roms/cpu_instrs.gb").MakeCartridge();
+var test = new CartridgeFactory("roms/pokemon.gb").MakeCartridge();
 var memory = new MemoryMap(test);
 //var cpu = new Gamemu.Emulator.Processor.CPU(memory);
 
@@ -40,7 +40,11 @@ if (texturePtr == IntPtr.Zero)
 
 IntPtr screenPtr = Marshal.AllocHGlobal(160 * 144 * 4);
 var screen = new byte[160 * 144 * 4];
+SDL_SetRenderDrawColor(rendererPtr, 0xFF, 0xFF, 0xFF, 0xFF);
 
+var lastTime = SDL_GetTicks();
+uint current = 0;
+uint frames = 0;
 
 var quit = false;
 while (!quit)
@@ -70,25 +74,51 @@ while (!quit)
 
     for (var i = 0; i < (160 * 144 * 4); i += 4)
     {
-        Color color;
-        if (i / (160 * 4 * 8) % 2 == 0)
-            color = (i / (8 * 4) % 4) switch
-            {
-                0 => black,
-                1 => darkGray,
-                2 => lightGray,
-                3 => white,
-                _ => null
-            };
-        else
-            color = (i / (8 * 4) % 4) switch
-            {
-                3 => black,
-                2 => darkGray,
-                1 => lightGray,
-                0 => white,
-                _ => null
-            };
+        Color color = null;
+        switch (i / (160 * 4 * 8) % 4)
+        {
+            case 0:
+                color = (i / (8 * 4) % 4) switch
+                {
+                    0 => black,
+                    1 => darkGray,
+                    2 => lightGray,
+                    3 => white,
+                    _ => null
+                };
+                break;
+            case 1:
+                color = (i / (8 * 4) % 4) switch
+                {
+                    1 => black,
+                    2 => darkGray, 
+                    3 => lightGray,
+                    0 => white,
+                    _ => null
+                };
+                break;
+            case 2:
+                color = (i / (8 * 4) % 4) switch
+                {
+                    2 => black,
+                    3 => darkGray,
+                    0 => lightGray,
+                    1 => white,
+                    _ => null
+                };
+                break;
+            case 3:
+                color = (i / (8 * 4) % 4) switch
+                {
+                    3 => black,
+                    0 => darkGray,
+                    1 => lightGray,
+                    2 => white,
+                    _ => null
+                };
+                break;
+        }
+            
 
         screen[i] = color.R;
         screen[i + 1] = color.G;
@@ -98,10 +128,19 @@ while (!quit)
     
     Marshal.Copy(screen, 0, screenPtr, 160 * 144 * 4);
     SDL_UpdateTexture(texturePtr, IntPtr.Zero, screenPtr, 160 * 4);
-    SDL_SetRenderDrawColor(rendererPtr, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(rendererPtr);
     SDL_RenderCopy(rendererPtr, texturePtr, IntPtr.Zero, IntPtr.Zero);
     SDL_RenderPresent(rendererPtr);
+
+    frames++;
+    if (lastTime < SDL_GetTicks() - 1000)
+    {
+        lastTime = SDL_GetTicks();
+        current = frames;
+        frames = 0;
+    }
+    
+    SDL_SetWindowTitle(windowPtr, $"{test.Title} - {current} FPS");
 }
 
 Marshal.FreeHGlobal(screenPtr);

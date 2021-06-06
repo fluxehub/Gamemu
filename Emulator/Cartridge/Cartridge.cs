@@ -5,8 +5,15 @@ namespace Gamemu.Emulator
 {
     public class Cartridge : Memory
     {
-        private string Title { get; set; }
+        public string Title { get; set; }
+        
         private readonly byte[] _data;
+        
+        // Will be used by mapping cartridges
+        private readonly int _romBanks;
+
+        private static readonly int[] _ramBanksTable = {0, 0, 1, 4, 16, 8};
+        private readonly int _ramBanks;
 
         public Cartridge(byte[] data)
         {
@@ -26,6 +33,10 @@ namespace Gamemu.Emulator
                 titleBuilder.Append(character);
             }
 
+            // Number of rom banks is 2^(rom size code + 1)
+            _romBanks = (int) Math.Pow(2, _data[0x0148] + 1);
+            _ramBanks = _ramBanksTable[_data[0x0149]];
+            
             Title = titleBuilder.ToString();
         }
 

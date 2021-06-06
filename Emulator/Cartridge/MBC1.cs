@@ -5,8 +5,6 @@ namespace Gamemu.Emulator
         private bool _hasRAM;
         private bool _hasBattery;
         private bool _ramEnabled = false;
-        private int _romBank = 1;
-        
 
         public MBC1(byte[] data, bool hasRAM, bool hasBattery) : base(data) {
             _hasRAM = hasRAM;

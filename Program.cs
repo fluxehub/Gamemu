@@ -26,21 +26,10 @@ var windowPtr = SDL_CreateWindow("Gamemu", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS
 if (windowPtr == IntPtr.Zero)
     throw new Exception($"Error creating SDL window: {SDL_GetError()}");
 
-var rendererPtr = SDL_CreateRenderer(windowPtr, -1,
-    SDL_RendererFlags.SDL_RENDERER_ACCELERATED | SDL_RendererFlags.SDL_RENDERER_PRESENTVSYNC);
+using var renderer = new Renderer(windowPtr, SDL_RendererFlags.SDL_RENDERER_ACCELERATED | SDL_RendererFlags.SDL_RENDERER_PRESENTVSYNC);
+using var screen = new Screen(renderer);
 
-if (rendererPtr == IntPtr.Zero)
-    throw new Exception($"Error creating renderer: {SDL_GetError()}");
-
-var texturePtr = SDL_CreateTexture(rendererPtr, SDL_PIXELFORMAT_ABGR8888, (int) SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING,
-    160, 144);
-
-if (texturePtr == IntPtr.Zero)
-    throw new Exception($"Error creating texture: {SDL_GetError()}");
-
-IntPtr screenPtr = Marshal.AllocHGlobal(160 * 144 * 4);
-var screen = new byte[160 * 144 * 4];
-SDL_SetRenderDrawColor(rendererPtr, 0xFF, 0xFF, 0xFF, 0xFF);
+var colors = new Color[160 * 144];
 
 var lastTime = SDL_GetTicks();
 uint current = 0;
@@ -72,65 +61,50 @@ while (!quit)
     var darkGray = palette.GetColor(PaletteColor.DarkGray);
     var black = palette.GetColor(PaletteColor.Black);
 
-    for (var i = 0; i < (160 * 144 * 4); i += 4)
+    for (var i = 0; i < (160 * 144); i++)
     {
-        Color color = null;
-        switch (i / (160 * 4 * 8) % 4)
+        Color color = (i / (160 * 8) % 4) switch
         {
-            case 0:
-                color = (i / (8 * 4) % 4) switch
-                {
-                    0 => black,
-                    1 => darkGray,
-                    2 => lightGray,
-                    3 => white,
-                    _ => null
-                };
-                break;
-            case 1:
-                color = (i / (8 * 4) % 4) switch
-                {
-                    1 => black,
-                    2 => darkGray, 
-                    3 => lightGray,
-                    0 => white,
-                    _ => null
-                };
-                break;
-            case 2:
-                color = (i / (8 * 4) % 4) switch
-                {
-                    2 => black,
-                    3 => darkGray,
-                    0 => lightGray,
-                    1 => white,
-                    _ => null
-                };
-                break;
-            case 3:
-                color = (i / (8 * 4) % 4) switch
-                {
-                    3 => black,
-                    0 => darkGray,
-                    1 => lightGray,
-                    2 => white,
-                    _ => null
-                };
-                break;
-        }
-            
+            0 => (i / 8 % 4) switch
+            {
+                0 => black,
+                1 => darkGray,
+                2 => lightGray,
+                3 => white,
+                _ => null
+            },
+            1 => (i / (8) % 4) switch
+            {
+                1 => black,
+                2 => darkGray,
+                3 => lightGray,
+                0 => white,
+                _ => null
+            },
+            2 => (i / (8) % 4) switch
+            {
+                2 => black,
+                3 => darkGray,
+                0 => lightGray,
+                1 => white,
+                _ => null
+            },
+            3 => (i / (8) % 4) switch
+            {
+                3 => black,
+                0 => darkGray,
+                1 => lightGray,
+                2 => white,
+                _ => null
+            },
+            _ => null
+        };
 
-        screen[i] = color.R;
-        screen[i + 1] = color.G;
-        screen[i + 2] = color.B;
-        screen[i + 3] = 0xFF;
+        colors[i] = color;
     }
     
-    Marshal.Copy(screen, 0, screenPtr, 160 * 144 * 4);
-    SDL_UpdateTexture(texturePtr, IntPtr.Zero, screenPtr, 160 * 4);
-    SDL_RenderClear(rendererPtr);
-    SDL_RenderCopy(rendererPtr, texturePtr, IntPtr.Zero, IntPtr.Zero);
-    SDL_RenderPresent(rendererPtr);
+    screen.Blit(colors);
+    renderer.Render(screen);
 
     frames++;
     if (lastTime < SDL_GetTicks() - 1000)
@@ -143,9 +117,6 @@ while (!quit)
     SDL_SetWindowTitle(windowPtr, $"{test.Title} - {current} FPS");
 }
 
-Marshal.FreeHGlobal(screenPtr);
-SDL_DestroyTexture(rendererPtr);
-SDL_DestroyRenderer(rendererPtr);
 SDL_DestroyWindow(windowPtr);
 SDL_Quit();
 

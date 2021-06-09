@@ -12,6 +12,7 @@ namespace Gamemu.Emulator.Processor.Instructions
         public AddressingMode Source = AddressingMode.None;
         public AddressingMode Dest = AddressingMode.None;
         public AddressingMode Addressable = AddressingMode.None;
+        public Condition JumpCondition = Condition.None;
     }
 
     [System.AttributeUsage(System.AttributeTargets.Parameter)]

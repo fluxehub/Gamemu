@@ -5,7 +5,7 @@ namespace Gamemu.Emulator.Processor.Instructions
 {
     public abstract class Instruction
     {
-        public int Cycles { get; private set; }
+        public int Cycles { get; protected set; }
 
         protected Instruction(int cycles)
         {

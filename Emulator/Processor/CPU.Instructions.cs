@@ -153,6 +153,19 @@ namespace Gamemu.Emulator.Processor
                         {
                             parameters.Add(this);
                         }
+                        else if (instructionAttributeType == typeof(bool?))
+                        {
+                            bool? conditionResult = instructionAttribute.JumpCondition switch
+                            {
+                                Condition.Zero => _f.ZeroFlag,
+                                Condition.NotZero => !_f.ZeroFlag,
+                                Condition.Carry => _f.CarryFlag,
+                                Condition.NotCarry => !_f.CarryFlag,
+                                _ => null
+                            };
+
+                            parameters.Add(conditionResult);
+                        }
                         else
                         {
                             throw new ArgumentException(

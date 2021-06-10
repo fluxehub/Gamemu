@@ -1,5 +1,6 @@
 using System;
 using Gamemu.Emulator.Processor.Addressing;
+using Gamemu.Emulator.Processor.Instructions;
 
 namespace Gamemu.Emulator.Processor
 {
@@ -57,19 +58,27 @@ namespace Gamemu.Emulator.Processor
             Console.WriteLine($"SP: 0x{_sp.Read():X4}    PC: 0x{_pc:X4}");
         }
 
-        public void Tick()
+        private void FetchDecodeExecute()
         {
             var opcode = _memory[_pc.Read()];
+            var instructionTable = _instructionTable;
             
             if (opcode == 0xCB)
             {
+                instructionTable = _cbInstructionTable;
                 _pc.Increment();
-                opcode = opcode << 8 | _memory[_pc.Read()];
+                opcode = _memory[_pc.Read()];
             }
 
-            //var cycles = DecodeAndExecute(opcode);
-
+            var instruction = instructionTable[opcode];
+            instruction.Execute();
+            
             _pc.Increment();
+        }
+
+        public void Tick()
+        {
+            FetchDecodeExecute();
         }
     }
 }

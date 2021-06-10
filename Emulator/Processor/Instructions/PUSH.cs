@@ -19,15 +19,7 @@ namespace Gamemu.Emulator.Processor.Instructions
 
         public override void Execute()
         {
-            // Value is always 16-bit, split and push to stack
-            var value = Source.Read();
-            var address = _sp.Read() - 1;
-            
-            _memory[address] =  value >> 8;
-            _memory[address - 1] = value & 0xff;
-            
-            // Set SP to top of stack
-            _sp.Write(address - 1);
+            InstructionUtilities.Push(_sp, _memory, Source.Read());
         }
     }
 }

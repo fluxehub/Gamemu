@@ -30,16 +30,11 @@ namespace Gamemu.Emulator.Processor.Instructions
         {
             // Push PC value onto stack
             var pcAddress = _pc.Read();
-            var stackAddress = _sp.Read() - 1;
-
-            _memory[stackAddress] = pcAddress >> 8;
-            _memory[stackAddress - 1] =  pcAddress & 0xFF;
             
-            // Set PC to reset address
-            _pc.Write(_address);
+            InstructionUtilities.Push(_sp, _memory, pcAddress);
             
-            // Set SP to top of stack
-            _sp.Write(stackAddress - 1);
+            // Set PC to reset address - 1 (incremented immediately after)
+            _pc.Write(_address - 1);
         }
     }
 }

@@ -41,6 +41,11 @@ namespace Gamemu.Emulator.Processor
             _ => throw new ArgumentException($"Addressing mode {mode.ToString()} not implemented")
         };
 
+        /// <summary>
+        /// Generates the unprefixed and 0xCB-prefixed instruction tables, where each index is a reference to a created
+        /// instruction object.
+        /// </summary>
+        /// <exception cref="ArgumentException">If unknown object parameters are defined in an instruction or unknown attributes are used</exception>
         private void CreateInstructionTable()
         {
             foreach (var type in Assembly.GetExecutingAssembly().GetTypes())

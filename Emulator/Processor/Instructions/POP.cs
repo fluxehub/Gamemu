@@ -19,17 +19,8 @@ namespace Gamemu.Emulator.Processor.Instructions
 
         public override void Execute()
         {
-            var address = _sp.Read();
-            
-            // Get the low and high bytes from the stack
-            var low = _memory[address];
-            var high = _memory[address + 1];
-            
-            // Write the 16-bit value to the registers
-            Dest.Write((high << 8) | low);
-            
-            // Set SP to top of stack
-            _sp.Write(address + 2);
+            // Write the stack value to the registers
+            Dest.Write(InstructionUtilities.Pop(_sp, _memory));
         }
     }
 }

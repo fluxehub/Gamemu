@@ -12,7 +12,7 @@ namespace Gamemu.Emulator.Processor.Instructions
     [Instruction(Opcode = 0x96, Cycles = 8, Source = AbsoluteHL)]
     [Instruction(Opcode = 0x97, Source = RegisterA)]
     
-    [Instruction(Opcode = 0xD6, Source = AddressingMode.Immediate)]
+    [Instruction(Opcode = 0xD6, Cycles = 8, Source = AddressingMode.Immediate)]
     public class SUB : ReadInstruction
     {
         private readonly Register _a;

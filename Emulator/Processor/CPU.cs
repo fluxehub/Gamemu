@@ -14,6 +14,9 @@ namespace Gamemu.Emulator.Processor
         private readonly Register16 _pc = new();
         private readonly MemoryMap _memory;
         
+        // Needs to be public for STOP/HALT
+        public CPUStatus Status { get; set; }
+
         // Needs to be public for EI/DI/RETI
         public InterruptStatus InterruptStatus { get; set; }
 
@@ -78,6 +81,8 @@ namespace Gamemu.Emulator.Processor
 
         public void Tick()
         {
+            if (Status == CPUStatus.Stopped) return;
+            
             FetchDecodeExecute();
         }
     }

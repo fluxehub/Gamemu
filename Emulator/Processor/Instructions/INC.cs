@@ -42,7 +42,7 @@ namespace Gamemu.Emulator.Processor.Instructions
             var value = Addressable.Read();
             var incremented = value + 1;
             Addressable.Write(value);
-            // TODO: Set flags
+            InstructionUtilities.SetFlags(_flags, value, 1, false, false, false);
         }
     }
 }

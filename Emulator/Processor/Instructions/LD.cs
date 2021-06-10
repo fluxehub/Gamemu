@@ -1,32 +1,33 @@
+using Gamemu.Emulator.Processor.Addressing;
 using static Gamemu.Emulator.Processor.Addressing.AddressingMode;
 
 namespace Gamemu.Emulator.Processor.Instructions
 {
     // LOL
-    [Instruction(Opcode = 0x01, Cycles = 12, Source = Immediate16, Dest = RegisterBC)]
-    [Instruction(Opcode = 0x11, Cycles = 12, Source = Immediate16, Dest = RegisterDE)]
-    [Instruction(Opcode = 0x21, Cycles = 12, Source = Immediate16, Dest = RegisterHL)]
-    [Instruction(Opcode = 0x31, Cycles = 12, Source = Immediate16, Dest = RegisterSP)]
+    [Instruction(Opcode = 0x01, Cycles = 12, Source = AddressingMode.Immediate16, Dest = RegisterBC)]
+    [Instruction(Opcode = 0x11, Cycles = 12, Source = AddressingMode.Immediate16, Dest = RegisterDE)]
+    [Instruction(Opcode = 0x21, Cycles = 12, Source = AddressingMode.Immediate16, Dest = RegisterHL)]
+    [Instruction(Opcode = 0x31, Cycles = 12, Source = AddressingMode.Immediate16, Dest = RegisterSP)]
     
     [Instruction(Opcode = 0x02, Cycles = 8, Source = RegisterA, Dest = AbsoluteBC)]
     [Instruction(Opcode = 0x12, Cycles = 8, Source = RegisterA, Dest = AbsoluteDE)]
     [Instruction(Opcode = 0x22, Cycles = 8, Source = RegisterA, Dest = AbsoluteHLInc)]
     [Instruction(Opcode = 0x32, Cycles = 8, Source = RegisterA, Dest = AbsoluteHLDec)]
     
-    [Instruction(Opcode = 0x06, Cycles = 8, Source = Immediate, Dest = RegisterB)]
-    [Instruction(Opcode = 0x16, Cycles = 8, Source = Immediate, Dest = RegisterD)]
-    [Instruction(Opcode = 0x26, Cycles = 8, Source = Immediate, Dest = RegisterH)]
-    [Instruction(Opcode = 0x36, Cycles = 12, Source = Immediate, Dest = AbsoluteHL)]
+    [Instruction(Opcode = 0x06, Cycles = 8, Source = AddressingMode.Immediate, Dest = RegisterB)]
+    [Instruction(Opcode = 0x16, Cycles = 8, Source = AddressingMode.Immediate, Dest = RegisterD)]
+    [Instruction(Opcode = 0x26, Cycles = 8, Source = AddressingMode.Immediate, Dest = RegisterH)]
+    [Instruction(Opcode = 0x36, Cycles = 12, Source = AddressingMode.Immediate, Dest = AbsoluteHL)]
 
     [Instruction(Opcode = 0x0A, Cycles = 8, Source = AbsoluteBC, Dest = RegisterA)]
     [Instruction(Opcode = 0x1A, Cycles = 8, Source = AbsoluteDE, Dest = RegisterA)]
     [Instruction(Opcode = 0x2A, Cycles = 8, Source = AbsoluteHLInc, Dest = RegisterA)]
     [Instruction(Opcode = 0x3A, Cycles = 8, Source = AbsoluteHLDec, Dest = RegisterA)]
     
-    [Instruction(Opcode = 0x0E, Cycles = 8, Source = Immediate, Dest = RegisterC)]
-    [Instruction(Opcode = 0x1E, Cycles = 8, Source = Immediate, Dest = RegisterE)]
-    [Instruction(Opcode = 0x2E, Cycles = 8, Source = Immediate, Dest = RegisterL)]
-    [Instruction(Opcode = 0x3E, Cycles = 8, Source = Immediate, Dest = RegisterA)]
+    [Instruction(Opcode = 0x0E, Cycles = 8, Source = AddressingMode.Immediate, Dest = RegisterC)]
+    [Instruction(Opcode = 0x1E, Cycles = 8, Source = AddressingMode.Immediate, Dest = RegisterE)]
+    [Instruction(Opcode = 0x2E, Cycles = 8, Source = AddressingMode.Immediate, Dest = RegisterL)]
+    [Instruction(Opcode = 0x3E, Cycles = 8, Source = AddressingMode.Immediate, Dest = RegisterA)]
     
     [Instruction(Opcode = 0x40, Source = RegisterB, Dest = RegisterB)]
     [Instruction(Opcode = 0x41, Source = RegisterC, Dest = RegisterB)]
@@ -118,6 +119,33 @@ namespace Gamemu.Emulator.Processor.Instructions
         public override void Execute()
         {
             Dest.Write(Source.Read());
+        }
+    }
+
+    [Instruction(Opcode = 0xF8, Cycles = 12, Source = AddressingMode.ImmediateSigned, Dest = RegisterHL)]
+    public class LDWithSPAdd : ReadWriteInstruction
+    {
+        private readonly Register16 _stackPointer;
+        private readonly FlagsRegister _flags;
+        
+        public LDWithSPAdd(ISource source, IDest dest, [SP] Register16 stackPointer, FlagsRegister flags, int cycles) : base(source, dest, cycles)
+        {
+            _stackPointer = stackPointer;
+            _flags = flags;
+        }
+
+        public override void Execute()
+        {
+            var a = _stackPointer.Read();
+            var b = Source.Read();
+            
+            Dest.Write(a + b);
+            
+            // Don't use double width as the second operand is 8 bit
+            InstructionUtilities.SetFlags(_flags, a, b, false);
+            
+            // On the off chance the stack pointer wraps around to zero, the zero flag still stays false
+            _flags.ZeroFlag = false;
         }
     }
 }

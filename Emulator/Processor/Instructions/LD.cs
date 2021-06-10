@@ -1,9 +1,12 @@
+using System.Runtime.InteropServices;
 using Gamemu.Emulator.Processor.Addressing;
 using static Gamemu.Emulator.Processor.Addressing.AddressingMode;
 
 namespace Gamemu.Emulator.Processor.Instructions
 {
     // LOL
+    [Instruction(Opcode = 0x08, Cycles = 20, Source = RegisterSP, Dest = AbsoluteImmediate)]
+    
     [Instruction(Opcode = 0x01, Cycles = 12, Source = AddressingMode.Immediate16, Dest = RegisterBC)]
     [Instruction(Opcode = 0x11, Cycles = 12, Source = AddressingMode.Immediate16, Dest = RegisterDE)]
     [Instruction(Opcode = 0x21, Cycles = 12, Source = AddressingMode.Immediate16, Dest = RegisterHL)]

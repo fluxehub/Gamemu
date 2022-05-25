@@ -1,4 +1,4 @@
-﻿using Gamemu.Emulator.Processor.Addressing;
+﻿using Gamemu.Emulator.Processor.Addressing.Modes;
 
 namespace Gamemu.Emulator.Processor.Instructions
 {

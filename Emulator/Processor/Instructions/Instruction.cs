@@ -1,60 +1,56 @@
-using Gamemu.Emulator.Processor.Addressing;
-using static Gamemu.Emulator.Processor.Addressing.AddressingMode;
+namespace Gamemu.Emulator.Processor.Instructions;
 
-namespace Gamemu.Emulator.Processor.Instructions
+public abstract class Instruction
 {
-    public abstract class Instruction
+    public int Cycles { get; protected set; }
+
+    protected Instruction(int cycles)
     {
-        public int Cycles { get; protected set; }
-
-        protected Instruction(int cycles)
-        {
-            Cycles = cycles;
-        }
-
-        public abstract void Execute();
+        Cycles = cycles;
     }
+
+    public abstract void Execute();
+}
     
-    // For instructions that only read and use a side effect
-    // e.g. PUSH
-    public abstract class ReadInstruction : Instruction
-    {
-        protected readonly ISource Source;
+// For instructions that only read and use a side effect
+// e.g. PUSH
+public abstract class ReadInstruction : Instruction
+{
+    protected readonly ISource Source;
 
-        protected ReadInstruction(ISource source, int cycles) : base(cycles)
-        {
-            Source = source;
-        }
+    protected ReadInstruction(ISource source, int cycles) : base(cycles)
+    {
+        Source = source;
     }
+}
 
-    public abstract class WriteInstruction : Instruction
-    {
-        protected readonly IDest Dest;
+public abstract class WriteInstruction : Instruction
+{
+    protected readonly IDest Dest;
         
-        protected WriteInstruction(IDest dest, int cycles) : base(cycles)
-        {
-            Dest = dest;
-        }
-    }
-
-    public abstract class ReadWriteInstruction : WriteInstruction
+    protected WriteInstruction(IDest dest, int cycles) : base(cycles)
     {
-        protected readonly ISource Source;
+        Dest = dest;
+    }
+}
+
+public abstract class ReadWriteInstruction : WriteInstruction
+{
+    protected readonly ISource Source;
         
-        protected ReadWriteInstruction(ISource source, IDest dest, int cycles) : base(dest, cycles)
-        {
-            Source = source;
-        }
-    }
-
-    // Instructions that read and write to the same place, such as INC
-    public abstract class SameReadWriteInstruction : Instruction
+    protected ReadWriteInstruction(ISource source, IDest dest, int cycles) : base(dest, cycles)
     {
-        protected readonly IAddressable Addressable;
+        Source = source;
+    }
+}
 
-        protected SameReadWriteInstruction(IAddressable addressable, int cycles) : base(cycles)
-        {
-            Addressable = addressable;
-        }
+// Instructions that read and write to the same place, such as INC
+public abstract class UpdateInstruction : Instruction
+{
+    protected readonly IAddressable Addressable;
+
+    protected UpdateInstruction(IAddressable addressable, int cycles) : base(cycles)
+    {
+        Addressable = addressable;
     }
 }

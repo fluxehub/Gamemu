@@ -1,11 +1,10 @@
-﻿namespace Gamemu.Emulator.Processor.Instructions
+﻿namespace Gamemu.Emulator.Processor.Instructions;
+
+public enum Condition
 {
-    public enum Condition
-    {
-        Zero,
-        NotZero,
-        Carry,
-        NotCarry,
-        None
-    }
+    Zero,
+    NotZero,
+    Carry,
+    NotCarry,
+    None
 }

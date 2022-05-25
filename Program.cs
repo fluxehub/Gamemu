@@ -2,10 +2,11 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using Gamemu.Emulator;
+using Gamemu.Emulator.Cartridge;
 using Gamemu.Rendering;
 using static SDL2.SDL;
 
-var test = new CartridgeFactory("roms/cpu_instrs/cpu_instrs.gb").MakeCartridge();
+var test = new CartridgeFactory("roms/cpu_instrs.gb").MakeCartridge();
 var memory = new MemoryMap(test);
 var cpu = new Gamemu.Emulator.Processor.CPU(memory);
 
@@ -20,7 +21,7 @@ var palette = Palette.FromPaletteImage(paletteFiles[p]);
 if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
     throw new Exception($"Error initializing SDL: {SDL_GetError()}");
 
-var windowPtr = SDL_CreateWindow("Gamemu", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 160 * 2, 144 * 2,
+var windowPtr = SDL_CreateWindow("Gamemu", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 160 * 3, 144 * 3,
     SDL_WindowFlags.SDL_WINDOW_SHOWN);
 
 if (windowPtr == IntPtr.Zero)

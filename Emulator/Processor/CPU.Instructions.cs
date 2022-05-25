@@ -60,25 +60,26 @@ public partial class CPU
             foreach (var instructionAttribute in instructionAttributes)
             {
                 var ctor = type.GetConstructors()[0];
+                
                 var opcode = instructionAttribute.Opcode;
                     
-                var isCB = (opcode >> 2) == 0xCB;
+                var isCb = (opcode >> 2) == 0xCB;
                     
-                var table = isCB ? _cbInstructionTable : _instructionTable;
+                var table = isCb ? _cbInstructionTable : _instructionTable;
                 if (table[opcode] != null)
                 {
-                    var cbString = isCB ? "CB" : "";
+                    var cbString = isCb ? "CB" : "";
                     throw new ArgumentException($"Opcode collision at 0x{cbString}{opcode:X2}");
                 }
 
-                opcode = isCB ? opcode >> 2 : opcode;
+                opcode = isCb ? opcode >> 2 : opcode;
                     
                 var parameters = new List<object>(ctor.GetParameters().Length);
-                    
+
                 foreach (var param in ctor.GetParameters())
                 {
                     var instructionAttributeType = param.ParameterType;
-                        
+
                     if (instructionAttributeType == typeof(int))
                     {
                         var paramAttributes = param.GetCustomAttributes().ToList();

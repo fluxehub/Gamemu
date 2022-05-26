@@ -3,11 +3,11 @@ using Gamemu.Emulator.Cartridge;
 
 namespace Gamemu.Emulator;
 
-public class RAM : Memory
+public class Ram : Memory
 {
     private readonly byte[] _ram;
 
-    public RAM(int size)
+    public Ram(int size)
     {
         _ram = new byte[size];
     }
@@ -26,8 +26,8 @@ public class RAM : Memory
 public class MemoryMap : Memory
 {
     private readonly BaseCartridge _cartridge;
-    private Memory _wRam = new RAM(8192);
-    private Memory _hRam = new RAM(128);
+    private Memory _wRam = new Ram(8192);
+    private Memory _hRam = new Ram(128);
 
     public MemoryMap(BaseCartridge cartridge)
     {

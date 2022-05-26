@@ -12,7 +12,7 @@ public class InstructionAttribute : System.Attribute
     public AddressingMode Source = AddressingMode.None;
     public AddressingMode Dest = AddressingMode.None;
     public AddressingMode Addressable = AddressingMode.None;
-    public Condition JumpCondition = Condition.None;
+    public ConditionType JumpCondition = ConditionType.None;
 }
 
 [System.AttributeUsage(System.AttributeTargets.Parameter)]

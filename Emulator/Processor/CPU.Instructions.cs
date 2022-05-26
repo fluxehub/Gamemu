@@ -160,18 +160,18 @@ public partial class CPU
                     {
                         parameters.Add(this);
                     }
-                    else if (instructionAttributeType == typeof(bool?))
+                    else if (instructionAttributeType == typeof(Condition))
                     {
-                        bool? conditionResult = instructionAttribute.JumpCondition switch
+                        Condition condition = instructionAttribute.JumpCondition switch
                         {
-                            Condition.Zero => _f.ZeroFlag,
-                            Condition.NotZero => !_f.ZeroFlag,
-                            Condition.Carry => _f.CarryFlag,
-                            Condition.NotCarry => !_f.CarryFlag,
+                            ConditionType.Zero => new ZeroCondition(_f),
+                            ConditionType.NotZero => new NotZeroCondition(_f),
+                            ConditionType.Carry => new CarryCondition(_f),
+                            ConditionType.NotCarry => new NotCarryCondition(_f),
                             _ => null
                         };
 
-                        parameters.Add(conditionResult);
+                        parameters.Add(condition);
                     }
                     else
                     {

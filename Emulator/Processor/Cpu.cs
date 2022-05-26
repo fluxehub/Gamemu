@@ -3,7 +3,7 @@ using Gamemu.Emulator.Processor.Addressing.Modes;
 
 namespace Gamemu.Emulator.Processor;
 
-public partial class CPU
+public partial class Cpu
 {
     private readonly Register _a, _b, _c, _d, _e, _h, _l;
     private readonly CombinedRegister _af, _bc, _de, _hl;
@@ -19,7 +19,7 @@ public partial class CPU
     // Needs to be public for EI/DI/RETI
     public InterruptStatus InterruptStatus { get; set; }
 
-    public CPU(MemoryMap memoryMap)
+    public Cpu(MemoryMap memoryMap)
     {
         _a = new Register();
         _b = new Register();

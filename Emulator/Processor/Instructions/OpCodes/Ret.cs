@@ -66,12 +66,12 @@ public class RetConditional : Instruction
 [Instruction(Opcode = 0xD9, Cycles = 16)]
 public class RetI : Instruction
 {
-    private readonly CPU _cpu;
+    private readonly Cpu _cpu;
     private readonly Register16 _sp;
     private readonly Register16 _pc;
     private readonly MemoryMap _memory;
         
-    public RetI(CPU cpu, [Sp] Register16 sp, [Pc] Register16 pc, MemoryMap memory, int cycles) : base(cycles)
+    public RetI(Cpu cpu, [Sp] Register16 sp, [Pc] Register16 pc, MemoryMap memory, int cycles) : base(cycles)
     {
         _cpu = cpu;
         _sp = sp;

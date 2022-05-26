@@ -3,9 +3,9 @@ namespace Gamemu.Emulator.Processor.Instructions.OpCodes;
 [Instruction(Opcode = 0xFB)]
 public class Ei : Instruction
 {
-    private readonly CPU _cpu;
+    private readonly Cpu _cpu;
         
-    public Ei(CPU cpu, int cycles) : base(cycles)
+    public Ei(Cpu cpu, int cycles) : base(cycles)
     {
         _cpu = cpu;
     }

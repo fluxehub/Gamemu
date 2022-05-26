@@ -8,7 +8,7 @@ using static SDL2.SDL;
 
 var test = new CartridgeFactory("roms/cpu_instrs.gb").MakeCartridge();
 var memory = new MemoryMap(test);
-var cpu = new Gamemu.Emulator.Processor.CPU(memory);
+var cpu = new Gamemu.Emulator.Processor.Cpu(memory);
 
 var decompiler = new Decompiler(test);
 var next = 0x491;

@@ -3,9 +3,9 @@ namespace Gamemu.Emulator.Processor.Instructions.OpCodes;
 [Instruction(Opcode = 0x76)]
 public class Halt : Instruction
 {
-    private readonly CPU _cpu;
+    private readonly Cpu _cpu;
         
-    public Halt(CPU cpu, int cycles) : base(cycles)
+    public Halt(Cpu cpu, int cycles) : base(cycles)
     {
         _cpu = cpu;
     }

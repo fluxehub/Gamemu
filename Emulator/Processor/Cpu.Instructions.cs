@@ -8,7 +8,7 @@ using Gamemu.Emulator.Processor.Addressing.Modes;
 
 namespace Gamemu.Emulator.Processor;
 
-public partial class CPU
+public partial class Cpu
 {
     private readonly Instruction[] _instructionTable = new Instruction[256];
     private readonly Instruction[] _cbInstructionTable = new Instruction[256];
@@ -156,7 +156,7 @@ public partial class CPU
                     {
                         parameters.Add(_f);
                     }
-                    else if (instructionAttributeType == typeof(CPU))
+                    else if (instructionAttributeType == typeof(Cpu))
                     {
                         parameters.Add(this);
                     }

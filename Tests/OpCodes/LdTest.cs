@@ -12,8 +12,7 @@ public class LdTest
         var source = new MockAddressable(1);
         var dest = new MockAddressable(0);
 
-        var ld = new Ld(source, dest, 0);
-        ld.Execute();
+        new Ld(source, dest, 0).Execute();
         
         Assert.Equal(1, dest.Value);
     }
@@ -26,8 +25,7 @@ public class LdTest
         var sp = new MockRegister16(1);
         var flags = new FlagsRegister();
         
-        var ld = new LdWithSpAdd(source, dest, sp, flags, 0);
-        ld.Execute();
+        new LdWithSpAdd(source, dest, sp, flags, 0).Execute();
         
         Assert.Equal(2, dest.Value);
     }
@@ -35,6 +33,26 @@ public class LdTest
     [Fact]
     public void LdWithSpAdd_SourceToDest_SetsCorrectFlags()
     {
-        // TODO: Test flags
+        var source = new MockAddressable(0x1);
+        var dest = new MockAddressable(0);
+        var sp = new MockRegister16(0xF);
+        var flags = new FlagsRegister();
+        
+        new LdWithSpAdd(source, dest, sp, flags, 0).Execute();
+        
+        Assert.False(flags.ZeroFlag);
+        Assert.False(flags.SubtractionFlag);
+        Assert.True(flags.HalfCarryFlag);
+        Assert.False(flags.CarryFlag);
+        
+        source.Write(0b1000_0000);
+        sp.Write(0b1000_1000);
+        
+        new LdWithSpAdd(source, dest, sp, flags, 0).Execute();
+
+        Assert.False(flags.ZeroFlag);
+        Assert.False(flags.SubtractionFlag);
+        Assert.False(flags.HalfCarryFlag);
+        Assert.True(flags.CarryFlag);
     }
 }

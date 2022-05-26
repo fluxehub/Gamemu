@@ -18,6 +18,7 @@ public class Immediate : ISource
     }
 }
     
+// This doesn't really need to exist, but it might be helpful for debugging output
 public class Immediate8Signed : Immediate
 {
     public Immediate8Signed(MemoryMap memoryMap, Register16 pc) : base(memoryMap, pc)

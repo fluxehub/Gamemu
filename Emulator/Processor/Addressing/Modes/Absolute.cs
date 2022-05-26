@@ -23,13 +23,13 @@ public class Absolute : IAddressable
 }
 
 // Used for (HL+)/(HL-) instructions
-public class AbsoluteWithRegIncOrDec : IAddressable
+public class AbsoluteWithRegValueShift : IAddressable
 {
     private readonly CombinedRegister _register;
     private readonly MemoryMap _memoryMap;
     private readonly int _shift;
 
-    public AbsoluteWithRegIncOrDec(MemoryMap map, CombinedRegister register, int shift)
+    public AbsoluteWithRegValueShift(MemoryMap map, CombinedRegister register, int shift)
     {
         _register = register;
         _memoryMap = map;
